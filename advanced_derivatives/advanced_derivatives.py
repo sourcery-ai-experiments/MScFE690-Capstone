@@ -12,7 +12,6 @@ dt = 0.02  # Time step
 N = int(T / dt)  # Number of time steps
 sim = 2000  # Number of sims
 
-
 def simulate_gbm(S0, mu, sigma, dt, N, sim):
     dt = T/N
     t = np.linspace(0, T, N)
@@ -47,7 +46,7 @@ def port_vol(wts, mean_returns, cov_matrix):
 def check_sum(wts):
     return np.sum(wts) - 1
 
-tickers = ['AAPL', 'AMZN', 'GOOGL', 'META',  'MSFT', 'NVDA', 'TSLA']
+    tickers = ['AAPL', 'AMZN', 'GOOGL', 'META',  'MSFT', 'NVDA', 'TSLA']
 start_date = '2014-01-01'
 end_date = '2024-04-01'
 
