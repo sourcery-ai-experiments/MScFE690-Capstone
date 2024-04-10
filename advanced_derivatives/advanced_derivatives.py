@@ -39,19 +39,19 @@ asset_returns = np.log(S[1:] / S[:-1])
 mean_returns = asset_returns.mean(axis=0)
 cov_matrix = np.cov(asset_returns.T)
 
-num_assets = simulations
-weights = np.array(num_assets * [1. / num_assets,])
+num_assets = sim
+wts = np.array(num_assets * [1. / num_assets,])
 
-def portfolio_vol(weights, mean_returns, cov_matrix):
-    return np.sqrt(np.dot(weights.T, np.dot(cov_matrix, weights)))
+def port_vol(wts, mean_returns, cov_matrix):
+    return np.sqrt(np.dot(wts.T, np.dot(cov_matrix, wts)))
 
-def check_sum(weights):
-    return np.sum(weights) - 1
+def check_sum(wts):
+    return np.sum(wts) - 1
 
 consts = ({'type': 'eq', 'fun': check_sum})
 bounds = tuple((0, 1) for asset in range(num_assets))
 
-opts = minimize(portfolio_vol, weights, args=(mean_returns, cov_matrix), method='SLSQP', bounds=bounds, consts=consts)
+opts = minimize(port_vol, wts, args=(mean_returns, cov_matrix), method='SLSQP', bounds=bounds, constraints=consts)
 
 print(f"Optimized Weights: {opts.x}")
 
@@ -66,18 +66,18 @@ returns = data.pct_change().dropna()
 mean_returns = returns.mean()
 cov_matrix = returns.cov()
 
-def portfolio_vol(weights):
-    return np.sqrt(np.dot(weights.T, np.dot(cov_matrix, weights)))
+def port_vol(wts):
+    return np.sqrt(np.dot(wts.T, np.dot(cov_matrix, wts)))
 
-def check_sum(weights):
-    return np.sum(weights) - 1
+def check_sum(wts):
+    return np.sum(wts) - 1
 
 consts = ({'type': 'eq', 'fun': check_sum})
 bounds = tuple((0, 1) for _ in range(len(tickers)))
-initial_weights = np.array(len(tickers) * [1. / len(tickers),])
+initial_wts = np.array(len(tickers) * [1. / len(tickers),])
 
-opts = minimize(portfolio_vol, initial_weights, method='SLSQP', bounds=bounds, consts=consts)
+opts = minimize(port_vol, initial_wts, method='SLSQP', bounds=bounds, constraints=consts)
 
-optimized_weights = opts.x
-for ticker, weight in zip(tickers, optimized_weights):
+optimized_wts = opts.x
+for ticker, weight in zip(tickers, optimized_wts):
     print(f"{ticker}: {weight:.3f}")
