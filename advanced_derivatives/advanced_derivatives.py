@@ -46,29 +46,25 @@ def port_vol(wts, mean_returns, cov_matrix):
 def check_sum(wts):
     return np.sum(wts) - 1
 
-    tickers = ['AAPL', 'AMZN', 'GOOGL', 'META',  'MSFT', 'NVDA', 'TSLA']
+tickers = ['AAPL', 'AMZN', 'GOOGL', 'META',  'MSFT', 'NVDA', 'TSLA']
 start_date = '2014-01-01'
 end_date = '2024-04-01'
 
 data = yf.download(tickers, start=start_date, end=end_date)['Adj Close']
 
-returns = data.pct_change().dropna()
+rtns = data.pct_change().dropna()
 
-mean_returns = returns.mean()
-cov_matrix = returns.cov()
+mean_rtns = rtns.mean()
+cov_mtx = rtns.cov()
 
 def port_vol(wts):
-    return np.sqrt(np.dot(wts.T, np.dot(cov_matrix, wts)))
+    return np.sqrt(np.dot(wts.T, np.dot(cov_mtx, wts)))
 
-def check_sum(wts):
-    return np.sum(wts) - 1
 
-consts = ({'type': 'eq', 'fun': check_sum})
-bounds = tuple((0, 1) for _ in range(len(tickers)))
-initial_wts = np.array(len(tickers) * [1. / len(tickers),])
+init_wts = np.array(len(tickers) * [1. / len(tickers),])
 
-opts = minimize(port_vol, initial_wts, method='SLSQP', bounds=bounds, constraints=consts)
+opts = minimize(port_vol, init_wts, method='SLSQP', bounds=bounds, constraints=consts)
 
-optimized_wts = opts.x
-for ticker, weight in zip(tickers, optimized_wts):
+opt_wts = opts.x
+for ticker, weight in zip(tickers, opt_wts):
     print(f"{ticker}: {weight:.3f}")
