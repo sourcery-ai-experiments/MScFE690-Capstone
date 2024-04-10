@@ -4,15 +4,17 @@ import pandas as pd
 import yfinance as yf
 from scipy.optimize import minimize
 
-S0 = 100  # Initial price
-T = 10.0  # Time to maturity
-mu = 0.15  # Expected return
+S0 = 150  # Initial price
+mu = 0.25  # Expected return
 sigma = 0.15  # Volatility
+T = 10.0  # Time to maturity
 dt = 0.02  # Time step
 N = int(T / dt)  # Number of time steps
 sim = 2000  # Number of sims
 
-def simulate_gbm(S0, mu, sigma, dt, N, sim):
+
+
+def sim_gbm(S0, mu, sigma, dt, N, sim):
     dt = T/N
     t = np.linspace(0, T, N)
     W = np.random.standard_normal(size=(N, sim))
@@ -24,7 +26,7 @@ def simulate_gbm(S0, mu, sigma, dt, N, sim):
     return S
 
 
-S = simulate_gbm(S0, mu, sigma, dt, N, sim)
+S = sim_gbm(S0, mu, sigma, dt, N, sim)
 
 plt.figure(figsize=(15,9))
 plt.plot(S[:, :15])
