@@ -48,13 +48,6 @@ def port_vol(wts, mean_returns, cov_matrix):
 def check_sum(wts):
     return np.sum(wts) - 1
 
-consts = ({'type': 'eq', 'fun': check_sum})
-bounds = tuple((0, 1) for asset in range(num_assets))
-
-opts = minimize(port_vol, wts, args=(mean_returns, cov_matrix), method='SLSQP', bounds=bounds, constraints=consts)
-
-print(f"Optimized Weights: {opts.x}")
-
 tickers = ['AAPL', 'AMZN', 'GOOGL', 'META',  'MSFT', 'NVDA', 'TSLA']
 start_date = '2014-01-01'
 end_date = '2024-04-01'
