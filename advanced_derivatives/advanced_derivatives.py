@@ -1,6 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import yfinance as yf
+from scipy.optimize import minimize
+
 
 # Parameter
 S0 = 100  # Initial price
@@ -40,7 +43,6 @@ mean_returns = asset_returns.mean(axis=0)
 cov_matrix = np.cov(asset_returns.T)
 
 # Portfolio optimization: Minimize volatility
-from scipy.optimize import minimize
 
 num_assets = simulations
 weights = np.array(num_assets * [1. / num_assets,])
@@ -58,12 +60,6 @@ opts = minimize(portfolio_volatility, weights, args=(mean_returns, cov_matrix), 
 
 # Print optimized weights
 print(f"Optimized Weights: {opts.x}")
-
-
-import yfinance as yf
-import pandas as pd
-import numpy as np
-from scipy.optimize import minimize
 
 # Define tickers and the historical period
 tickers = ['AAPL', 'MSFT', 'GOOGL', 'META', 'TSLA', 'AMZN', 'NVDA']
