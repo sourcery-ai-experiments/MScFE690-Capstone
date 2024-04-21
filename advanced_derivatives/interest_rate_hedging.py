@@ -42,10 +42,10 @@ class InterestRateOption:
     """
     This class indicates the interest rates option.
     Attributes:
-        strike_price (float): The set rate at which the option can be executed.
-        premium (float): The cost to purchase the option.
-        type (str): The type of option ('call' or 'put').
-        maturity (int): The term of the option in years.
+        str_price: This strike price, the option can be excersized at this rate and it is floating.
+        pre: The premium is the price to purchase the option and it is floating.
+        type: This is type which indicate the of option type, call or put and it is string.
+        mat: This is the maturity and provide the option expiration in years and it is integer.
     """
     def __init__(self, str_price, prem, type, mat):
         self.str_price = str_price
@@ -54,31 +54,31 @@ class InterestRateOption:
         self.mat = mat
 
     def value(self):
-        # This method should calculate the intrinsic value of the option.
-        # For a call, it would be positive if current rates are above the strike; for a put, if below.
+        #This function will provide the option intrinsic value.
+        # If the strike price are below the current rates it is indicating the call and if reverse it is inocating put.
         pass
 
-def assess_interest_rate_risk(current_rate, projected_rates):
+def assess_interest_rate_risk(curr_rate, proj_rates):
     """
-    Assess the potential risk due to changes in interest rates.
-    Args:
-        current_rate (float): The current interest rate.
-        projected_rates (list of float): A list of projected future rates.
+    This function evaluates any risk cuased by interest rate change
+    Arguments:
+        curr_rate: This is current rate and it is floating.
+        proj_rates: This projected rate list and it is floating list.
     Returns:
-        float: The difference between the maximum and minimum projected rates as a measure of risk.
+        This is providing the maximum and minimum future rates difference, which it measures the risk and it is floating.
     """
     return max(projected_rates) - min(projected_rates)
 
-def select_hedging_instrument(risk, instruments):
+def select_hedging_instrument(risk, insts):
     """
-    Selects a hedging instrument based on the assessed risk.
-    Args:
-        risk (float): The assessed risk level.
-        instruments (list): A list of financial instruments available for hedging.
+    This function based on evaluated risk will select the instrument that required to be hedged.
+    Arguments:
+        risk: This is the evaluated risk and it is floating.
+        inst: This indicates a list of instruments available for hedging and it is a list.
     Returns:
-        list: A list of instruments deemed suitable for hedging given the risk.
+        list: Based on the evaluated risk it will indicat the list of the appropriate instruments for hedging and it is a list.
     """
     if risk > 0.05:
-        return [inst for inst in instruments if isinstance(inst, InterestRateSwap)]
+        return [inst for inst in insts if isinstance(inst, InterestRateSwap)]
     else:
-        return [inst for inst in instruments if isinstance(inst, InterestRateOption)]
+        return [inst for inst in insts if isinstance(inst, InterestRateOption)]
