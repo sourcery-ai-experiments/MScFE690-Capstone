@@ -1,5 +1,7 @@
 # interest rate hedging
 
+import numpy as np
+
 class InterestRateSwap:
     """
     This class indicates the swap interest rate. This will be utilized to in derivative to manage interest rate.
@@ -67,9 +69,13 @@ def assess_interest_rate_risk(curr_rate, proj_rates):
     Returns:
         This is providing the maximum and minimum future rates difference, which it measures the risk and it is floating.
     """
-    return max(projected_rates) - min(projected_rates)
+    std_dev = np.std(proj_rates)
+    mean_dev = np.mean([abs(rate - curr_rate) for rate in proj_rates])
+    return std_dev, mean_dev
 
-def select_hedging_instrument(risk, insts):
+    
+
+def select_hedging_instrument(risk, insts, risk_tol):
     """
     This function based on evaluated risk will select the instrument that required to be hedged.
     Arguments:
@@ -78,7 +84,13 @@ def select_hedging_instrument(risk, insts):
     Returns:
         list: Based on the evaluated risk it will indicat the list of the appropriate instruments for hedging and it is a list.
     """
-    if risk > 0.05:
+
+    std_dev, mean_dev = risk
+    if std_devn > risk_tol or mean_dev > risk_tol:
+        
         return [inst for inst in insts if isinstance(inst, InterestRateSwap)]
     else:
+       
         return [inst for inst in insts if isinstance(inst, InterestRateOption)]
+
+
