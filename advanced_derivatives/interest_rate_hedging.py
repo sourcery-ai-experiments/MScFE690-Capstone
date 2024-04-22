@@ -49,7 +49,7 @@ class InterestRateOption:
         type: This is type which indicate the of option type, call or put and it is string.
         mat: This is the maturity and provide the option expiration in years and it is integer.
     """
-    def __init__(self, str_price, prem, type, mat):
+    def __init__(self, str_price, pre, type, mat):
         self.str_price = str_price
         self.pre = pre
         self.type = type
@@ -60,18 +60,51 @@ class InterestRateOption:
         # If the strike price are below the current rates it is indicating the call and if reverse it is inocating put.
         pass
 
-def assess_interest_rate_risk(curr_rate, proj_rates):
+def vasicek(r0, a, b, sigma, T, dt=1/252.):
     """
-    This function evaluates any risk cuased by interest rate change
-    Arguments:
-        curr_rate: This is current rate and it is floating.
-        proj_rates: This projected rate list and it is floating list.
+    This function by using Vasicek model evalute interest rate.
+    Args:
+        r0: This is the initial interest rate, and it is floating.
+        a: Thisi is the rate of reversion to the mean, and it is floating.
+        b: This is long-term mean rate, and it is floating.
+        sigma: This is the interest rate volatility nad it is floating.
+        T (int): This is time in days, and it is in integer .
+        dt: This the step of time in years, and it is floating.
     Returns:
-        This is providing the maximum and minimum future rates difference, which it measures the risk and it is floating.
+        It evaluare the interest rate.
     """
-    std_dev = np.std(proj_rates)
-    mean_dev = np.mean([abs(rate - curr_rate) for rate in proj_rates])
-    return std_dev, mean_dev
+    N = int(T / dt)
+    rates = np.zeros(N)
+    rates[0] = r0
+    for t in range(1, N):
+        dr = a * (b - rates[t-1]) * dt + sigma * np.sqrt(dt) * np.random.normal()
+        rates[t] = rates[t-1] + dr
+    return rates
+
+
+def assess_interest_rate_risk(rates):
+    """
+    This function based on the evaluated interest rate variance evaluating the risk.
+    Args:
+        rates: This is evaluated  interest rates array.
+    Returns:
+        This will return the rate variance in floating. 
+    """
+    return np.var(rates)
+
+def plot_rates(rates):
+    """
+    This function will plot the evaluated interest rate.
+    Args:
+        rates: This is evaluated  interest rates array.
+    """
+    plt.figure(figsize=(10, 5))
+    plt.plot(rates)
+    plt.title("Evaluated Interest Rate")
+    plt.xlabel("Time Steps")
+    plt.ylabel("Interest Rate")
+    plt.grid(True)
+    plt.show()
 
     
 
@@ -85,12 +118,10 @@ def select_hedging_instrument(risk, insts, risk_tol):
         list: Based on the evaluated risk it will indicat the list of the appropriate instruments for hedging and it is a list.
     """
 
-    std_dev, mean_dev = risk
-    if std_devn > risk_tol or mean_dev > risk_tol:
-        
+     if risk > risk_tol:
         return [inst for inst in insts if isinstance(inst, InterestRateSwap)]
     else:
-       
         return [inst for inst in insts if isinstance(inst, InterestRateOption)]
+
 
 
