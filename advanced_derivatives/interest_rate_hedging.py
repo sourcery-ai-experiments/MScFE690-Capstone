@@ -17,10 +17,10 @@ class InterestRateSwap:
         self.float_rate_ind = float_rate_ind
         self.mat = mat
 
-    def value(self):
-        # This function will provide the swap value.
-        # Encounting the pricipal and it will compare the current and fixed rate.
-        pass
+    def value(self, int_rate):
+        # The return will provide the payoff, which calculated by finding the fixed rate and floating rates difference and multiplied by principal 
+        return (self.fixed_rate - int_rate) * self.principal
+
 
 class InterestRateFuture:
     """
@@ -35,10 +35,10 @@ class InterestRateFuture:
         self.set_price = set_price
         self.mat = mat
 
-    def value(self):
-        # This function will provide the futute value for the current market 
-        # This can be found by evaluating the contract rate and current interate rate difference.
-        pass
+    def value(self, interest_rate):
+        # The return will provide the payoff, which calculated by finding settlement price differences
+        return (self.set_price - int_rate) * self.cont_size
+
 
 class InterestRateOption:
     """
@@ -55,10 +55,14 @@ class InterestRateOption:
         self.type = type
         self.mat = mat
 
-    def value(self):
-        #This function will provide the option intrinsic value.
-        # If the strike price are below the current rates it is indicating the call and if reverse it is inocating put.
-        pass
+    def value(self, interest_rate):
+        # The return will provide the payoff, which calculated on call or put option
+        if self.type == 'call':
+            return max(int_rate - self.str_price, 0) * self.pre
+        else:
+            return max(self.str_price - int_rate, 0) * self.pre
+
+ 
 
 def vasicek(r0, a, b, sigma, T, dt=1/252.):
     """
@@ -123,5 +127,25 @@ def select_hedging_instrument(risk, insts, risk_tol):
     else:
         return [inst for inst in insts if isinstance(inst, InterestRateOption)]
 
+
+
+def plot_payoffs(rates, insts):
+    """
+    This will plot for each hedging the payoff time series.
+    Args:
+        rates: This is an array of evaluated interest rates.
+        instruments: This is the hedging list.
+    """
+    plt.figure(figsize=(14, 7))
+    for inst in insts:
+        payoffs = [inst.value(rate) for rate in rates]
+        plt.plot(payoffs, label=type(inst).__name__)
+
+    plt.title("Hedging Instrument Payoffs Over Time")
+    plt.xlabel("Time Steps")
+    plt.ylabel("Payoff")
+    plt.legend()
+    plt.grid(True)
+    plt.show()
 
 
